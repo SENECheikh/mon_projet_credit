@@ -236,24 +236,25 @@ menu = st.sidebar.selectbox(
 
 
 # =============================================================================
-# 1. IMPORT DES DONNÉES
+# 1. IMPORT DES DONNÉES (VERSION AUTOMATIQUE)
 # =============================================================================
 
 if menu == "🏁 Importation des données":
 
-    st.header("📥 Importation du fichier CSV")
+    st.header("📊 Chargement automatique du dataset")
 
-    uploaded_file = st.file_uploader("Charge ton dataset", type=["csv"])
+    @st.cache_data
+    def load_data():
+        df = pd.read_csv("credit_risk_dataset.csv", sep=";")
+        return df
 
-    if uploaded_file:
-        df = pd.read_csv(uploaded_file, sep=";")
-        st.success("✅ Dataset chargé avec succès")
+    df = load_data()
+    st.session_state["raw_data"] = df
 
-        st.subheader("Aperçu des données")
-        st.dataframe(df.head())
+    st.success("✅ Dataset chargé automatiquement depuis GitHub.")
 
-        st.session_state["raw_data"] = df
-
+    st.subheader("Aperçu des données")
+    st.dataframe(df.head())
 
 # =============================================================================
 # 2. EDA INTERACTIVE
